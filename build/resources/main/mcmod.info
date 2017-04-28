@@ -1,0 +1,20 @@
+[
+  {
+    "modid": "MeltsAMany",
+    "name": "MeltsAMany",
+    "description": "",
+    "version": "1.0-SNAPSHOT",
+    "mcversion": "1.10.2",
+    "url": "",
+    "updateUrl": "",
+    "authorList": [
+      "SkySom"
+    ],
+    "credits": "",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": [
+      ""
+    ]
+  }
+]
