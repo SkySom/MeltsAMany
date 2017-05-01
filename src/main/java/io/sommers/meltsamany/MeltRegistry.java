@@ -10,7 +10,9 @@ import net.minecraftforge.fluids.FluidStack;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @ZenClass("mods.meltsamany.MeltRegistry")
 public class MeltRegistry {
@@ -45,9 +47,26 @@ public class MeltRegistry {
         }
 
         if (fluidStacks != null && inputStack != null) {
+            Map<String, FluidStack[]> entries = MeltsAMany.instance.getMeltEntries();
             for (ItemStack itemStack : inputStack) {
-                if (!MeltsAMany.instance.getMeltEntries().containsKey(itemStack.toString())) {
-                    MeltsAMany.instance.getMeltEntries().put(itemStack.toString(), fluidStacks);
+                String itemStackString = itemStack.toString();
+                if (!entries.containsKey(itemStackString)) {
+                    entries.put(itemStackString, fluidStacks);
+                } else {
+                    List<FluidStack> allStacks = Lists.newArrayList();
+                    allStacks.addAll(Arrays.asList(entries.get(itemStackString)));
+                    for (FluidStack newFluidStack : fluidStacks) {
+                        boolean hasStack = false;
+                        for (FluidStack currentFluidStack : allStacks) {
+                            if (currentFluidStack.getFluid() == newFluidStack.getFluid()) {
+                                hasStack = true;
+                            }
+                        }
+                        if (!hasStack) {
+                            allStacks.add(newFluidStack);
+                        }
+                    }
+                    entries.put(itemStackString, allStacks.toArray(new FluidStack[allStacks.size()]));
                 }
             }
         }
