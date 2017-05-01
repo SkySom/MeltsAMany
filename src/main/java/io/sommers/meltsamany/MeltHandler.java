@@ -1,6 +1,5 @@
 package io.sommers.meltsamany;
 
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -10,16 +9,21 @@ import slimeknights.tconstruct.smeltery.events.TinkerSmelteryEvent;
 public class MeltHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onMelting(TinkerSmelteryEvent.OnMelting onMeltingEvent) {
-        for (MeltEntry meltEntry : MeltsAMany.instance.meltEntryList) {
-            if (ItemStack.areItemStacksEqual(meltEntry.getItemStack(), onMeltingEvent.itemStack)) {
-                FluidStack additional = meltEntry.getFluidStack().copy();
-                SmelteryTank tank = onMeltingEvent.smeltery.getTank();
-                int currentAvailable = tank.getCapacity() - tank.getFluidAmount();
-                currentAvailable -= onMeltingEvent.result.amount;
-                if (additional.amount > currentAvailable) {
-                    additional.amount = currentAvailable;
+        String itemStackString = onMeltingEvent.itemStack.toString();
+        if (MeltsAMany.instance.getMeltEntries().containsKey(itemStackString)) {
+            FluidStack[] additional = MeltsAMany.instance.getMeltEntries().get(itemStackString);
+            SmelteryTank tank = onMeltingEvent.smeltery.getTank();
+            int currentAvailable = tank.getCapacity() - tank.getFluidAmount();
+            currentAvailable -= onMeltingEvent.result.amount;
+            for (FluidStack fluidStack : additional) {
+                FluidStack copy = fluidStack.copy();
+                if (copy.amount > currentAvailable) {
+                    copy.amount = currentAvailable;
                 }
-                tank.fill(additional, true);
+                if (copy.amount >= 0) {
+                    currentAvailable -= copy.amount;
+                    tank.fill(copy, true);
+                }
             }
         }
     }

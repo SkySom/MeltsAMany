@@ -11,9 +11,9 @@ import stanhebben.zenscript.annotations.ZenMethod;
 @ZenClass("mods.meltsamany.MeltRegistry")
 public class MeltRegistry {
     @ZenMethod
-    public static void addSecondaryResult(IItemStack itemStackInput, ILiquidStack liquidStack) {
+    public static void addSecondaryResult(IItemStack itemStackInput, ILiquidStack... liquidStacks) {
         ItemStack inputStack = null;
-        FluidStack fluidStack = null;
+        FluidStack[] fluidStacks = null;
 
         if (itemStackInput != null && itemStackInput.getInternal() instanceof ItemStack) {
             inputStack = (ItemStack) itemStackInput.getInternal();
@@ -21,14 +21,23 @@ public class MeltRegistry {
             MineTweakerAPI.getLogger().logError("Couldn't find ItemStack input");
         }
 
-        if (liquidStack != null && liquidStack.getInternal() instanceof FluidStack) {
-            fluidStack = (FluidStack) liquidStack.getInternal();
+        if (liquidStacks != null) {
+            fluidStacks = new FluidStack[liquidStacks.length];
+            for (int i = 0; i < liquidStacks.length; i++) {
+                ILiquidStack liquidStack = liquidStacks[i];
+                if (liquidStack != null && liquidStack.getInternal() instanceof FluidStack) {
+                    fluidStacks[i] = (FluidStack) liquidStack.getInternal();
+                } else {
+                    MineTweakerAPI.getLogger().logError("Couldn't find FluidStack output");
+                }
+            }
         } else {
-            MineTweakerAPI.getLogger().logError("Couldn't find FluidStack output");
-        }
+            MineTweakerAPI.getLogger().logError("You must enter at least one ILiquidStack");
 
-        if (fluidStack != null && inputStack != null) {
-            MeltsAMany.instance.meltEntryList.add(new MeltEntry(inputStack, fluidStack));
+        }
+        
+        if (fluidStacks != null && inputStack != null) {
+            MeltsAMany.instance.getMeltEntries().put(inputStack.toString(), fluidStacks);
         }
     }
 }
