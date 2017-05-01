@@ -5,7 +5,6 @@ import minetweaker.MineTweakerAPI;
 import minetweaker.api.item.IIngredient;
 import minetweaker.api.item.IItemStack;
 import minetweaker.api.liquid.ILiquidStack;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -19,7 +18,6 @@ public class MeltRegistry {
     public static void addSecondaryResult(IIngredient itemStackInput, ILiquidStack... liquidStacks) {
         List<ItemStack> inputStack = null;
         FluidStack[] fluidStacks = null;
-
 
         if (itemStackInput != null) {
             inputStack = Lists.newArrayList();
@@ -44,12 +42,13 @@ public class MeltRegistry {
             }
         } else {
             MineTweakerAPI.getLogger().logError("You must enter at least one ILiquidStack");
-
         }
 
         if (fluidStacks != null && inputStack != null) {
             for (ItemStack itemStack : inputStack) {
-                MeltsAMany.instance.getMeltEntries().put(itemStack.toString(), fluidStacks);
+                if (!MeltsAMany.instance.getMeltEntries().containsKey(itemStack.toString())) {
+                    MeltsAMany.instance.getMeltEntries().put(itemStack.toString(), fluidStacks);
+                }
             }
         }
     }
