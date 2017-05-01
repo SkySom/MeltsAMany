@@ -47,14 +47,14 @@ public class MeltRegistry {
         }
 
         if (fluidStacks != null && inputStack != null) {
-            Map<String, FluidStack[]> entries = MeltsAMany.instance.getMeltEntries();
+            Map<String, List<FluidStack>> entries = MeltsAMany.instance.getMeltEntries();
             for (ItemStack itemStack : inputStack) {
                 String itemStackString = itemStack.toString();
                 if (!entries.containsKey(itemStackString)) {
-                    entries.put(itemStackString, fluidStacks);
+                    entries.put(itemStackString, Arrays.asList(fluidStacks));
                 } else {
                     List<FluidStack> allStacks = Lists.newArrayList();
-                    allStacks.addAll(Arrays.asList(entries.get(itemStackString)));
+                    allStacks.addAll(entries.get(itemStackString));
                     for (FluidStack newFluidStack : fluidStacks) {
                         boolean hasStack = false;
                         for (FluidStack currentFluidStack : allStacks) {
@@ -66,9 +66,14 @@ public class MeltRegistry {
                             allStacks.add(newFluidStack);
                         }
                     }
-                    entries.put(itemStackString, allStacks.toArray(new FluidStack[allStacks.size()]));
+                    entries.put(itemStackString, allStacks);
                 }
             }
         }
+    }
+
+    @ZenMethod
+    public static void addMeltHandler(IMeltFunction meltFunction) {
+        MeltsAMany.instance.getMeltFunctions().add(meltFunction);
     }
 }

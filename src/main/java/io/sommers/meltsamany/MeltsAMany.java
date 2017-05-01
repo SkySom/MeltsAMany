@@ -3,7 +3,6 @@ package io.sommers.meltsamany;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import minetweaker.MineTweakerAPI;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Mod;
@@ -25,7 +24,8 @@ public class MeltsAMany {
     @Instance(MOD_ID)
     public static MeltsAMany instance;
 
-    private Map<String, FluidStack[]> meltEntries = Maps.newHashMap();
+    private Map<String, List<FluidStack>> meltEntries = Maps.newHashMap();
+    private List<IMeltFunction> meltFunctions = Lists.newArrayList();
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
@@ -33,11 +33,11 @@ public class MeltsAMany {
         MinecraftForge.EVENT_BUS.register(new MeltHandler());
     }
 
-    public Map<String, FluidStack[]> getMeltEntries() {
+    public Map<String, List<FluidStack>> getMeltEntries() {
         return meltEntries;
     }
 
-    public void setMeltEntries(Map<String, FluidStack[]> meltEntries) {
-        this.meltEntries = meltEntries;
+    public List<IMeltFunction> getMeltFunctions() {
+        return meltFunctions;
     }
 }
